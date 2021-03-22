@@ -1,0 +1,20 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "surrogate.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "BlockEntityMixin",
+    "ItemStackMixin",
+    "NbtHelperMixin",
+    "SurrogateStateAccessor"
+  ],
+  "client": [
+    "ItemStackClientMixin"
+  ],
+  "server": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
