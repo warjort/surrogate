@@ -18,11 +18,11 @@
 package surrogate;
 
 import net.fabricmc.api.ClientModInitializer;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.ingame.HandledScreens;
-import net.minecraft.client.gui.screen.ingame.ScreenHandlerProvider;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.screen.ScreenHandlerType;
+import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.MenuAccess;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.MenuType;
 import surrogate.client.SurrogateScreen;
 
 public class SurrogateClient implements ClientModInitializer {
@@ -32,7 +32,7 @@ public class SurrogateClient implements ClientModInitializer {
         registerScreen(SurrogateMain.SURROGATE_SCREEN_HANDLER_TYPE, SurrogateScreen::new);
     }
 
-    private static <T extends ScreenHandler, U extends Screen & ScreenHandlerProvider<T>> void registerScreen(final ScreenHandlerType<T> type, final HandledScreens.Provider<T, U> provider) {
-        HandledScreens.register(type, provider);
+    private static <T extends AbstractContainerMenu, U extends Screen & MenuAccess<T>> void registerScreen(final MenuType<T> type, final MenuScreens.ScreenConstructor<T, U> provider) {
+        MenuScreens.register(type, provider);
     }
 }

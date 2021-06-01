@@ -22,11 +22,11 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 import com.mojang.serialization.MapCodec;
 
-import net.minecraft.state.State;
+import net.minecraft.world.level.block.state.StateHolder;
 
-@Mixin(State.class)
+@Mixin(StateHolder.class)
 public interface SurrogateStateAccessor<S> {
 
     @Accessor()
-    MapCodec<S> getCodec();
+    MapCodec<S> getPropertiesCodec();
 }

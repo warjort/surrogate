@@ -17,68 +17,67 @@
  */
 package surrogate.common;
 
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.BlockEntityProvider;
-import net.minecraft.block.BlockRenderType;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.BlockWithEntity;
-import net.minecraft.block.Material;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.screen.NamedScreenHandlerFactory;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldView;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.phys.BlockHitResult;
 
-public class SurrogateBlock extends BlockWithEntity implements BlockEntityProvider {
+public class SurrogateBlock extends BaseEntityBlock {
 
     private SurrogateStateManager surrogateStateManager;
 
     public SurrogateBlock() {
-        super(AbstractBlock.Settings.of(Material.STONE).strength(-1.0F, 3600000.0F).dropsNothing().allowsSpawning((state, world, pos, type) -> false));
+        super(BlockBehaviour.Properties.of(Material.STONE).strength(-1.0F, 3600000.0F).noDrops().isValidSpawn((state, world, pos, type) -> false));
         this.surrogateStateManager = new SurrogateStateManager(this);
-        this.setDefaultState((BlockState) this.surrogateStateManager.getDefaultState());
+        registerDefaultState(this.surrogateStateManager.any());
     }
 
     @Override
-    public BlockRenderType getRenderType(BlockState state) {
-        return BlockRenderType.MODEL;
+    public RenderShape getRenderShape(final BlockState state) {
+        return RenderShape.MODEL;
     }
 
     @Override
-    public SurrogateBlockEntity createBlockEntity(final BlockView world) {
+    public SurrogateBlockEntity newBlockEntity(final BlockGetter world) {
         return new SurrogateBlockEntity();
     }
 
     @Override
-    public SurrogateStateManager getStateManager() {
+    public SurrogateStateManager getStateDefinition() {
         return this.surrogateStateManager;
     }
 
     @Override
-    public ActionResult onUse(final BlockState state, final World world, final BlockPos pos, final PlayerEntity player, final Hand hand,
+    public InteractionResult use(final BlockState state, final Level world, final BlockPos pos, final Player player, final InteractionHand hand,
             final BlockHitResult hit) {
-        if (world.isClient) {
-            return ActionResult.SUCCESS;
+        if (world.isClientSide) {
+            return InteractionResult.SUCCESS;
         }
-        final NamedScreenHandlerFactory namedScreenHandlerFactory = state.createScreenHandlerFactory(world, pos);
+        final MenuProvider namedScreenHandlerFactory = state.getMenuProvider(world, pos);
         if (namedScreenHandlerFactory != null) {
-            player.openHandledScreen(namedScreenHandlerFactory);
+            player.openMenu(namedScreenHandlerFactory);
         }
-        return ActionResult.SUCCESS;
+        return InteractionResult.SUCCESS;
     }
 
     @Override
-    public boolean canPlaceAt(final BlockState state, final WorldView world, final BlockPos pos) {
+    public boolean canSurvive(final BlockState state, final LevelReader world, final BlockPos pos) {
         return false;
     }
 
     @Override
-    public ItemStack getPickStack(final BlockView world, final BlockPos pos, final BlockState state) {
+    public ItemStack getCloneItemStack(final BlockGetter world, final BlockPos pos, final BlockState state) {
         return ItemStack.EMPTY;
     }
 }

@@ -26,11 +26,11 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import surrogate.SurrogateMain;
 
 @Mixin(ItemStack.class)
@@ -39,13 +39,13 @@ public abstract class ItemStackMixin {
     @Shadow
     private CompoundTag tag;
 
-    @Inject(method = "fromTag", at = @At("HEAD"), cancellable=true)
-    private static void surrogate_fromTag(final CompoundTag tag, final CallbackInfoReturnable<ItemStack> callbackInfo) {
-        final Identifier identifier = new Identifier(tag.getString("id"));
+    @Inject(method = "of", at = @At("HEAD"), cancellable=true)
+    private static void surrogate_of(final CompoundTag tag, final CallbackInfoReturnable<ItemStack> callbackInfo) {
+        final ResourceLocation identifier = new ResourceLocation(tag.getString("id"));
         if (identifier.getPath().isEmpty()) {
             return;
         }
-        final Optional<Item> entry = Registry.ITEM.getOrEmpty(identifier);
+        final Optional<Item> entry = Registry.ITEM.getOptional(identifier);
         if (entry.isPresent()) {
             return;
         }
@@ -54,14 +54,14 @@ public abstract class ItemStackMixin {
 
         final ItemStack result = new ItemStack(SurrogateMain.SURROGATE_ITEM, 1);
         
-        final CompoundTag myTag = result.getOrCreateSubTag(SurrogateMain.MOD_ID);
-        myTag.putUuid("discriminator", UUID.randomUUID()); // Should stop most attempts to stack/merge?
+        final CompoundTag myTag = result.getOrCreateTagElement(SurrogateMain.MOD_ID);
+        myTag.putUUID("discriminator", UUID.randomUUID()); // Should stop most attempts to stack/merge?
         myTag.put("original", originalTag);
         callbackInfo.setReturnValue(result);
     }
 
-    @Inject(method = "toTag", at = @At("HEAD"), cancellable=true)
-    private void surrogate_toTag(final CompoundTag tag, final CallbackInfoReturnable<CompoundTag> callbackInfo) {
+    @Inject(method = "save", at = @At("HEAD"), cancellable=true)
+    private void surrogate_save(final CompoundTag tag, final CallbackInfoReturnable<CompoundTag> callbackInfo) {
         final CompoundTag original = SurrogateMain.getSurrogateOriginal(this.tag);
         if (original == null) {
             return;

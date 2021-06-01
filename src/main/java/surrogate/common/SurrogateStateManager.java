@@ -25,13 +25,13 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.mojang.serialization.MapCodec;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.state.StateManager;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
 import surrogate.mixin.SurrogateStateAccessor;
 
-public class SurrogateStateManager extends StateManager<Block, BlockState> {
+public class SurrogateStateManager extends StateDefinition<Block, BlockState> {
 
     private final SurrogateBlockState defaultState;
 
@@ -41,28 +41,28 @@ public class SurrogateStateManager extends StateManager<Block, BlockState> {
 
     @SuppressWarnings("unchecked")
     public SurrogateStateManager(final SurrogateBlock block) {
-        super(Block::getDefaultState, block, SurrogateBlockState::new, Collections.emptyMap());
-        this.defaultState = (SurrogateBlockState) getDefaultState();
-        this.codec = ((SurrogateStateAccessor<BlockState>) this.defaultState).getCodec();
-        states.add(defaultState);
+        super(Block::defaultBlockState, block, SurrogateBlockState::new, Collections.emptyMap());
+        this.defaultState = (SurrogateBlockState) any();
+        this.codec = ((SurrogateStateAccessor<BlockState>) this.defaultState).getPropertiesCodec();
+        this.states.add(this.defaultState);
     }
 
     @Override
-    public ImmutableList<BlockState> getStates() {
+    public ImmutableList<BlockState> getPossibleStates() {
         return ImmutableList.copyOf(this.states);
     }
 
     public SurrogateBlockState getOrCreateBlockState(final CompoundTag tag) {
-        for (SurrogateBlockState state : states) {
+        for (SurrogateBlockState state : this.states) {
             if (Objects.equals(tag, state.getTag())) {
                 return state;
             }
         }
 
-        final SurrogateBlockState result = new SurrogateBlockState(getOwner(), this.defaultState.getEntries(), this.codec);
+        final SurrogateBlockState result = new SurrogateBlockState(getOwner(), this.defaultState.getValues(), this.codec);
         result.setTag(tag);
         this.states.add(result);
-        Block.STATE_IDS.add(result);
+        Block.BLOCK_STATE_REGISTRY.add(result);
         return result;
     }
 }

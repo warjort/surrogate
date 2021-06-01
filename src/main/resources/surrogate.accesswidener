@@ -1,11 +1,12 @@
 accessWidener v1 named
 
-accessible  class   net/minecraft/client/gui/screen/ingame/HandledScreens
-accessible  class   net/minecraft/client/gui/screen/ingame/HandledScreens$Provider
-accessible  method  net/minecraft/client/gui/screen/ingame/HandledScreens   getProvider (Lnet/minecraft/screen/ScreenHandlerType;)Lnet/minecraft/client/gui/screen/ingame/HandledScreens$Provider;
-accessible  method  net/minecraft/client/gui/screen/ingame/HandledScreens   register    (Lnet/minecraft/screen/ScreenHandlerType;Lnet/minecraft/client/gui/screen/ingame/HandledScreens$Provider;)V
-accessible  class   net/minecraft/screen/ScreenHandlerType$Factory
-accessible  class   net/minecraft/screen/ScreenHandlerType
-extendable  class   net/minecraft/screen/ScreenHandlerType
-accessible  method  net/minecraft/screen/ScreenHandlerType  <init>  (Lnet/minecraft/screen/ScreenHandlerType$Factory;)V
-extendable  method  net/minecraft/screen/ScreenHandlerType  <init>  (Lnet/minecraft/screen/ScreenHandlerType$Factory;)V
+accessible  class   net/minecraft/client/gui/screens/MenuScreens
+accessible  class   net/minecraft/client/gui/screens/MenuScreens$ScreenConstructor
+accessible  method  net/minecraft/client/gui/screens/MenuScreens   getConstructor (Lnet/minecraft/world/inventory/MenuType;)Lnet/minecraft/client/gui/screens/MenuScreens$ScreenConstructor;
+accessible  method  net/minecraft/client/gui/screens/MenuScreens   register       (Lnet/minecraft/world/inventory/MenuType;Lnet/minecraft/client/gui/screens/MenuScreens$ScreenConstructor;)V
+accessible  class   net/minecraft/world/level/block/entity/BlockEntityType$BlockEntitySupplier
+accessible  class   net/minecraft/world/inventory/MenuType$MenuSupplier
+accessible  class   net/minecraft/world/inventory/MenuType
+extendable  class   net/minecraft/world/inventory/MenuType
+accessible  method  net/minecraft/world/inventory/MenuType  <init>  (Lnet/minecraft/world/inventory/MenuType$MenuSupplier;)V
+extendable  method  net/minecraft/world/inventory/MenuType  <init>  (Lnet/minecraft/world/inventory/MenuType$MenuSupplier;)V

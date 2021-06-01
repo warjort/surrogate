@@ -18,38 +18,38 @@
 package surrogate.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.gui.screen.ingame.BookScreen;
-import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.gui.screens.inventory.BookViewScreen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Inventory;
 import surrogate.common.SurrogateScreenHandler;
 
 //TODO better gui
 @Environment(EnvType.CLIENT)
-public class SurrogateScreen extends HandledScreen<SurrogateScreenHandler> {
+public class SurrogateScreen extends AbstractContainerScreen<SurrogateScreenHandler> {
 
-    public SurrogateScreen(final SurrogateScreenHandler handler, final PlayerInventory inventory, final Text title) {
+    public SurrogateScreen(final SurrogateScreenHandler handler, final Inventory inventory, final Component title) {
         super(handler, inventory, title);
     }
 
     @Override
-    protected void drawBackground(final MatrixStack matrices, final float delta, final int mouseX, final int mouseY) {
+    protected void renderBg(final PoseStack matrices, final float delta, final int mouseX, final int mouseY) {
         // unused
     }
 
     @Override
-    public void render(final MatrixStack matrices, final int mouseX, final int mouseY, final float delta) {
+    public void render(final PoseStack matrices, final int mouseX, final int mouseY, final float delta) {
         this.renderBackground(matrices);
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        this.client.getTextureManager().bindTexture(BookScreen.BOOK_TEXTURE);
+        this.minecraft.getTextureManager().bind(BookViewScreen.BOOK_LOCATION);
         final int i = (this.width - 192) / 2;
-        this.drawTexture(matrices, i, 2, 0, 0, 192, 192);
+        this.blit(matrices, i, 2, 0, 0, 192, 192);
 
-        final int k = this.textRenderer.getWidth(this.title);
-        this.textRenderer.draw(matrices, this.title, (float)(i - k + 192 - 44), 18.0F, 0);
+        final int k = this.font.width(this.title);
+        this.font.draw(matrices, this.title, i - k + 192 - 44, 18.0F, 0);
     }
 }

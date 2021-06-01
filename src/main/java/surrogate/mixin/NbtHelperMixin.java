@@ -24,23 +24,23 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
+import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtHelper;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.nbt.NbtUtils;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import surrogate.SurrogateMain;
 import surrogate.common.SurrogateBlockState;
 
-@Mixin(NbtHelper.class)
+@Mixin(NbtUtils.class)
 public class NbtHelperMixin {
 
-    @Inject(method = "toBlockState", at = @At("HEAD"), cancellable=true)
-    private static void surrogate_toBlockState(final CompoundTag tag, final CallbackInfoReturnable<BlockState> callbackInfo) {
+    @Inject(method = "readBlockState", at = @At("HEAD"), cancellable=true)
+    private static void surrogate_readBlockState(final CompoundTag tag, final CallbackInfoReturnable<BlockState> callbackInfo) {
         if (tag.contains("Name", 8)) {
-            final Identifier identifier = new Identifier(tag.getString("Name"));
-            Optional<Block> block = Registry.BLOCK.getOrEmpty(identifier);
+            final ResourceLocation identifier = new ResourceLocation(tag.getString("Name"));
+            Optional<Block> block = Registry.BLOCK.getOptional(identifier);
             if (block.isPresent())
                 return;
 
@@ -48,8 +48,8 @@ public class NbtHelperMixin {
         }
     }
 
-    @Inject(method = "fromBlockState", at = @At("HEAD"), cancellable=true)
-    private static void surrogate_fromBlockState(final BlockState state, final CallbackInfoReturnable<CompoundTag> callbackInfo) {
+    @Inject(method = "writeBlockState", at = @At("HEAD"), cancellable=true)
+    private static void surrogate_writeBlockState(final BlockState state, final CallbackInfoReturnable<CompoundTag> callbackInfo) {
         if (state instanceof SurrogateBlockState == false)
             return;
 

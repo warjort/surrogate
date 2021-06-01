@@ -22,9 +22,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import surrogate.SurrogateMain;
 import surrogate.common.SurrogateBlockEntity;
 import surrogate.common.SurrogateBlockState;
@@ -32,13 +32,13 @@ import surrogate.common.SurrogateBlockState;
 @Mixin(BlockEntity.class)
 public abstract class BlockEntityMixin {
 
-    @Inject(method = "createFromTag", at = @At("HEAD"), cancellable=true)
-    private static void surrogate_createFromTag(final BlockState blockState, final CompoundTag tag, final CallbackInfoReturnable<BlockEntity> callbackInfo) {
+    @Inject(method = "loadStatic", at = @At("HEAD"), cancellable=true)
+    private static void surrogate_loadStatic(final BlockState blockState, final CompoundTag tag, final CallbackInfoReturnable<BlockEntity> callbackInfo) {
         if (blockState == null || blockState instanceof SurrogateBlockState == false) {
             return;
         }
-        final SurrogateBlockEntity result = SurrogateMain.SURROGATE_BLOCK_ENTITY_TYPE.instantiate();
-        result.fromTag(blockState, tag);
+        final SurrogateBlockEntity result = SurrogateMain.SURROGATE_BLOCK_ENTITY_TYPE.create();
+        result.load(blockState, tag);
         callbackInfo.setReturnValue(result);
     }
 }

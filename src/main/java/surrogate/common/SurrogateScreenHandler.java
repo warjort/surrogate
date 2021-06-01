@@ -17,19 +17,19 @@
  */
 package surrogate.common;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.screen.ScreenHandler;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import surrogate.SurrogateMain;
 
-public class SurrogateScreenHandler extends ScreenHandler {
+public class SurrogateScreenHandler extends AbstractContainerMenu {
 
-    public SurrogateScreenHandler(final int syncId, final PlayerInventory inventory) {
+    public SurrogateScreenHandler(final int syncId, final Inventory inventory) {
         super(SurrogateMain.SURROGATE_SCREEN_HANDLER_TYPE, syncId);
     }
 
     @Override
-    public boolean canUse(final PlayerEntity player) {
+    public boolean stillValid(final Player player) {
         return true;
     }
 }

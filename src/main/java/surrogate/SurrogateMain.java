@@ -25,16 +25,16 @@ import org.apache.logging.log4j.Logger;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockEntityProvider;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.item.Item;
+import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.screen.ScreenHandlerType;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import surrogate.common.SurrogateBlock;
 import surrogate.common.SurrogateBlockEntity;
 import surrogate.common.SurrogateBlockState;
@@ -49,10 +49,10 @@ public class SurrogateMain implements ModInitializer {
     public static final SurrogateBlock SURROGATE_BLOCK;
     public static final BlockEntityType<SurrogateBlockEntity> SURROGATE_BLOCK_ENTITY_TYPE;
     public static final SurrogateItem SURROGATE_ITEM;
-    public static final ScreenHandlerType<SurrogateScreenHandler> SURROGATE_SCREEN_HANDLER_TYPE;
+    public static final MenuType<SurrogateScreenHandler> SURROGATE_SCREEN_HANDLER_TYPE;
 
-    public static Identifier ID(final String path) {
-        return new Identifier(MOD_ID, path);
+    public static ResourceLocation ID(final String path) {
+        return new ResourceLocation(MOD_ID, path);
     }
 
     public static ModContainer getModContainer() {
@@ -61,7 +61,7 @@ public class SurrogateMain implements ModInitializer {
     }
 
     public static SurrogateBlockState getOrCreateBlockState(final CompoundTag tag) {
-        return SURROGATE_BLOCK.getStateManager().getOrCreateBlockState(tag);
+        return SURROGATE_BLOCK.getStateDefinition().getOrCreateBlockState(tag);
     }
 
     public static CompoundTag getSurrogateOriginal(final CompoundTag tag) {
@@ -74,12 +74,13 @@ public class SurrogateMain implements ModInitializer {
 
     @Override
     public void onInitialize() {
+        // nothing
     }
 
     static {
         SURROGATE_BLOCK = registerBlock("surrogate_block", new SurrogateBlock());
         SURROGATE_BLOCK_ENTITY_TYPE = registerBlockEntityType(SurrogateBlockEntity::new, SURROGATE_BLOCK);
-        SURROGATE_SCREEN_HANDLER_TYPE = registerScreenHandlerType(SURROGATE_BLOCK_ENTITY_TYPE, SurrogateScreenHandler::new);
+        SURROGATE_SCREEN_HANDLER_TYPE = registerMenuType(SURROGATE_BLOCK_ENTITY_TYPE, SurrogateScreenHandler::new);
         SURROGATE_ITEM = registerItem("surrogate_item", new SurrogateItem());
     }
 
@@ -87,17 +88,17 @@ public class SurrogateMain implements ModInitializer {
         return Registry.register(Registry.BLOCK, ID(path), block);
     }
 
-    private static <T extends Block & BlockEntityProvider, U extends BlockEntity> BlockEntityType<U> registerBlockEntityType(final Supplier<? extends U> supplier, final T block) {
-        final BlockEntityType.Builder<U> builder = BlockEntityType.Builder.create(supplier, block);
-        return Registry.register(Registry.BLOCK_ENTITY_TYPE, Registry.BLOCK.getId(block), builder.build(null));
+    private static <T extends Block & EntityBlock, U extends BlockEntity> BlockEntityType<U> registerBlockEntityType(final Supplier<? extends U> supplier, final T block) {
+        final BlockEntityType.Builder<U> builder = BlockEntityType.Builder.of(supplier, block);
+        return Registry.register(Registry.BLOCK_ENTITY_TYPE, Registry.BLOCK.getKey(block), builder.build(null));
     }
 
     private static <T extends Item> T registerItem(final String path, final T item) {
         return Registry.register(Registry.ITEM, ID(path), item);
     }
 
-    private static <T extends ScreenHandler> ScreenHandlerType<T> registerScreenHandlerType(final BlockEntityType<?> blockEntityType, final ScreenHandlerType.Factory<T> factory) {
-        final ScreenHandlerType<T> type = new ScreenHandlerType<>(factory);
-        return Registry.register(Registry.SCREEN_HANDLER, Registry.BLOCK_ENTITY_TYPE.getId(blockEntityType), type);
+    private static <T extends AbstractContainerMenu> MenuType<T> registerMenuType(final BlockEntityType<?> blockEntityType, final MenuType.MenuSupplier<T> factory) {
+        final MenuType<T> type = new MenuType<>(factory);
+        return Registry.register(Registry.MENU, Registry.BLOCK_ENTITY_TYPE.getKey(blockEntityType), type);
     }
 }

@@ -17,19 +17,19 @@
  */
 package surrogate.common;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.screen.NamedScreenHandlerFactory;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import surrogate.SurrogateMain;
 
-public class SurrogateBlockEntity extends BlockEntity implements NamedScreenHandlerFactory {
+public class SurrogateBlockEntity extends BlockEntity implements MenuProvider {
 
     private CompoundTag tag;
 
@@ -38,13 +38,13 @@ public class SurrogateBlockEntity extends BlockEntity implements NamedScreenHand
     }
 
     @Override
-    public void fromTag(final BlockState state, final CompoundTag tag) {
-        super.fromTag(state, tag);
+    public void load(final BlockState state, final CompoundTag tag) {
+        super.load(state, tag);
         this.tag = tag.copy();
     }
 
     @Override
-    public CompoundTag toTag(final CompoundTag tag) {
+    public CompoundTag save(final CompoundTag tag) {
         if (this.tag != null) {
             return this.tag.copy();
         }
@@ -52,22 +52,21 @@ public class SurrogateBlockEntity extends BlockEntity implements NamedScreenHand
     }
 
     @Override
-    public ScreenHandler createMenu(final int syncId, final PlayerInventory inv, final PlayerEntity player) {
+    public AbstractContainerMenu createMenu(final int syncId, final Inventory inv, final Player player) {
         return new SurrogateScreenHandler(syncId, inv);
     }
 
     @Override
-    public Text getDisplayName() {
-        final CompoundTag stateTag = this.getCachedState().getTag();
+    public Component getDisplayName() {
+        final CompoundTag stateTag = this.getBlockState().getTag();
         if (stateTag != null) {
-            return new LiteralText(stateTag.getString("Name"));
-        } else {
-            return new TranslatableText(getCachedState().getBlock().getTranslationKey());
+            return new TextComponent(stateTag.getString("Name"));
         }
+        return new TranslatableComponent(getBlockState().getBlock().getDescriptionId());
     }
 
     @Override
-    public SurrogateBlockState getCachedState() {
-        return (SurrogateBlockState) super.getCachedState();
+    public SurrogateBlockState getBlockState() {
+        return (SurrogateBlockState) super.getBlockState();
     }
 }

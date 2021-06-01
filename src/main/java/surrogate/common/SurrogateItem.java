@@ -17,11 +17,11 @@
  */
 package surrogate.common;
 
-import net.minecraft.item.Item;
+import net.minecraft.world.item.Item;
 
 public class SurrogateItem extends Item {
 
     public SurrogateItem() {
-        super(new Item.Settings().maxCount(1));
+        super(new Item.Properties().stacksTo(1));
     }
 }

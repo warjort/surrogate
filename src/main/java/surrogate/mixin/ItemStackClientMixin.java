@@ -25,12 +25,12 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import net.minecraft.client.item.TooltipContext;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import surrogate.SurrogateMain;
 
 @Mixin(ItemStack.class)
@@ -39,13 +39,13 @@ public abstract class ItemStackClientMixin {
     @Shadow
     private CompoundTag tag;
 
-    @Inject(method = "getTooltip", at = @At("RETURN"), cancellable=true)
-    private void surrogate_getTooltip(final PlayerEntity player, final TooltipContext context, final CallbackInfoReturnable<List<Text>> callbackInfo) {
-        final List<Text> result = callbackInfo.getReturnValue();
+    @Inject(method = "getTooltipLines", at = @At("RETURN"), cancellable=true)
+    private void surrogate_getTooltipLines(final Player player, final TooltipFlag context, final CallbackInfoReturnable<List<Component>> callbackInfo) {
+        final List<Component> result = callbackInfo.getReturnValue();
 
         final CompoundTag original = SurrogateMain.getSurrogateOriginal(this.tag);
         if (original != null) {
-            result.add(new LiteralText(original.getString("id")));
+            result.add(new TextComponent(original.getString("id")));
         }
         callbackInfo.setReturnValue(result);
     }
