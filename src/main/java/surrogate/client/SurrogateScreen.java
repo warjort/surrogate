@@ -24,6 +24,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.BookViewScreen;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import surrogate.common.SurrogateScreenHandler;
@@ -44,8 +45,9 @@ public class SurrogateScreen extends AbstractContainerScreen<SurrogateScreenHand
     @Override
     public void render(final PoseStack matrices, final int mouseX, final int mouseY, final float delta) {
         this.renderBackground(matrices);
-        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        this.minecraft.getTextureManager().bind(BookViewScreen.BOOK_LOCATION);
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.setShaderTexture(0, BookViewScreen.BOOK_LOCATION);
         final int i = (this.width - 192) / 2;
         this.blit(matrices, i, 2, 0, 0, 192, 192);
 

@@ -22,6 +22,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -33,12 +34,12 @@ import surrogate.common.SurrogateBlockState;
 public abstract class BlockEntityMixin {
 
     @Inject(method = "loadStatic", at = @At("HEAD"), cancellable=true)
-    private static void surrogate_loadStatic(final BlockState blockState, final CompoundTag tag, final CallbackInfoReturnable<BlockEntity> callbackInfo) {
+    private static void surrogate_loadStatic(final BlockPos pos, final BlockState blockState, final CompoundTag tag, final CallbackInfoReturnable<BlockEntity> callbackInfo) {
         if (blockState == null || blockState instanceof SurrogateBlockState == false) {
             return;
         }
-        final SurrogateBlockEntity result = SurrogateMain.SURROGATE_BLOCK_ENTITY_TYPE.create();
-        result.load(blockState, tag);
+        final SurrogateBlockEntity result = SurrogateMain.SURROGATE_BLOCK_ENTITY_TYPE.create(pos, blockState);
+        result.load(tag);
         callbackInfo.setReturnValue(result);
     }
 }

@@ -17,6 +17,7 @@
  */
 package surrogate.common;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
@@ -33,22 +34,22 @@ public class SurrogateBlockEntity extends BlockEntity implements MenuProvider {
 
     private CompoundTag tag;
 
-    public SurrogateBlockEntity() {
-        super(SurrogateMain.SURROGATE_BLOCK_ENTITY_TYPE);
+    public SurrogateBlockEntity(final BlockPos pos, final BlockState blockState) {
+        super(SurrogateMain.SURROGATE_BLOCK_ENTITY_TYPE, pos, blockState);
     }
 
     @Override
-    public void load(final BlockState state, final CompoundTag tag) {
-        super.load(state, tag);
-        this.tag = tag.copy();
+    public void load(final CompoundTag loadTag) {
+        super.load(loadTag);
+        this.tag = loadTag.copy();
     }
 
     @Override
-    public CompoundTag save(final CompoundTag tag) {
+    public CompoundTag save(final CompoundTag saveTag) {
         if (this.tag != null) {
             return this.tag.copy();
         }
-        return tag;
+        return saveTag;
     }
 
     @Override

@@ -17,8 +17,6 @@
  */
 package surrogate;
 
-import java.util.function.Supplier;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -88,7 +86,7 @@ public class SurrogateMain implements ModInitializer {
         return Registry.register(Registry.BLOCK, ID(path), block);
     }
 
-    private static <T extends Block & EntityBlock, U extends BlockEntity> BlockEntityType<U> registerBlockEntityType(final Supplier<? extends U> supplier, final T block) {
+    private static <T extends Block & EntityBlock, U extends BlockEntity> BlockEntityType<U> registerBlockEntityType(final BlockEntityType.BlockEntitySupplier<? extends U> supplier, final T block) {
         final BlockEntityType.Builder<U> builder = BlockEntityType.Builder.of(supplier, block);
         return Registry.register(Registry.BLOCK_ENTITY_TYPE, Registry.BLOCK.getKey(block), builder.build(null));
     }

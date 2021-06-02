@@ -49,8 +49,8 @@ public class SurrogateBlock extends BaseEntityBlock {
     }
 
     @Override
-    public SurrogateBlockEntity newBlockEntity(final BlockGetter world) {
-        return new SurrogateBlockEntity();
+    public SurrogateBlockEntity newBlockEntity(final BlockPos pos, final BlockState blockState) {
+        return new SurrogateBlockEntity(pos, blockState);
     }
 
     @Override

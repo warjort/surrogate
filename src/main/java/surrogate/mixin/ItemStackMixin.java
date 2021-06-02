@@ -61,12 +61,12 @@ public abstract class ItemStackMixin {
     }
 
     @Inject(method = "save", at = @At("HEAD"), cancellable=true)
-    private void surrogate_save(final CompoundTag tag, final CallbackInfoReturnable<CompoundTag> callbackInfo) {
+    private void surrogate_save(final CompoundTag saveTag, final CallbackInfoReturnable<CompoundTag> callbackInfo) {
         final CompoundTag original = SurrogateMain.getSurrogateOriginal(this.tag);
         if (original == null) {
             return;
         }
-        final CompoundTag result = copyTag(original, tag);
+        final CompoundTag result = copyTag(original, saveTag);
         callbackInfo.setReturnValue(result);
     }
 
