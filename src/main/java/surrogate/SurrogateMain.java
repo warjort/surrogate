@@ -42,7 +42,7 @@ import surrogate.common.SurrogateScreenHandler;
 public class SurrogateMain implements ModInitializer {
 
     public static final Logger log = LogManager.getLogger();
-    public static String MOD_ID = "surrogate";
+    public static final String MOD_ID = "surrogate";
 
     public static final SurrogateBlock SURROGATE_BLOCK;
     public static final BlockEntityType<SurrogateBlockEntity> SURROGATE_BLOCK_ENTITY_TYPE;
