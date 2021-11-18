@@ -3,7 +3,7 @@
   "id": "${archivesBaseName}",
   "version": "${version}",
 
-  "name": "${projectDescription}",
+  "name": "${projectName}",
   "description": "${projectDescription}",
   "authors": [
     "warjort"

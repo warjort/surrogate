@@ -35,7 +35,7 @@ public abstract class BlockEntityMixin {
 
     @Inject(method = "loadStatic", at = @At("HEAD"), cancellable=true)
     private static void surrogate_loadStatic(final BlockPos pos, final BlockState blockState, final CompoundTag tag, final CallbackInfoReturnable<BlockEntity> callbackInfo) {
-        if (blockState == null || blockState instanceof SurrogateBlockState == false) {
+        if (blockState instanceof SurrogateBlockState == false) {
             return;
         }
         final SurrogateBlockEntity result = SurrogateMain.SURROGATE_BLOCK_ENTITY_TYPE.create(pos, blockState);
