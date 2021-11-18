@@ -35,7 +35,7 @@ import net.minecraft.world.phys.BlockHitResult;
 
 public class SurrogateBlock extends BaseEntityBlock {
 
-    private SurrogateStateManager surrogateStateManager;
+    private final SurrogateStateManager surrogateStateManager;
 
     public SurrogateBlock() {
         super(BlockBehaviour.Properties.of(Material.STONE).strength(-1.0F, 3600000.0F).noDrops().isValidSpawn((state, world, pos, type) -> false));
